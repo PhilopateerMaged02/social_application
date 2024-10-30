@@ -2,6 +2,7 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/layout/social_layout.dart';
 import 'package:social_app/modules/SocialApp/register/cubit/cubit.dart';
 import 'package:social_app/modules/SocialApp/register/cubit/states.dart';
 import 'package:social_app/shared/components/components.dart';
@@ -20,7 +21,9 @@ class SocialRegisterScreen extends StatelessWidget {
       create: (BuildContext context) => SocialRegisterCubit(),
       child: BlocConsumer<SocialRegisterCubit, SocialRegisterStates>(
         listener: (BuildContext context, SocialRegisterStates state) {
-          if (state is SocialRegisterSuccessState) {}
+          if (state is SocialCreateUserSuccessState) {
+            navigateToandKill(context, SocialLayout());
+          }
         },
         builder: (BuildContext context, SocialRegisterStates state) => Scaffold(
           appBar: AppBar(),
@@ -108,14 +111,14 @@ class SocialRegisterScreen extends StatelessWidget {
                         builder: (BuildContext context) {
                           return defaultButton(
                               function: () {
-                                // if(formKey.currentState!.validate())
-                                // {
-                                //   SocialRegisterCubit.get(context).RegisterUser(
-                                //       email: emailController.text,
-                                //       password: passwordController.text,
-                                //       name: nameController.text,
-                                //       phone: phoneController.text);
-                                // }
+                                if (formKey.currentState!.validate()) {
+                                  SocialRegisterCubit.get(context).userRegister(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      name: nameController.text,
+                                      phone: phoneController.text,
+                                      isEmailVerified: false);
+                                }
                               },
                               text: 'REGISTER');
                         },

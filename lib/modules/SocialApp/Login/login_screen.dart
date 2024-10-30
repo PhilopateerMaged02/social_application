@@ -17,7 +17,11 @@ class SocialLoginScreen extends StatelessWidget {
       create: (BuildContext context) => SocialLoginCubit(),
       child: BlocConsumer<SocialLoginCubit, SocialLoginStates>(
         listener: (BuildContext context, SocialLoginStates state) {
-          if (state is SocialLoginSuccessState) {}
+          if (state is SocialLoginSuccessState) {
+            showToust(message: "Welcome", state: ToastStates.SUCCESS);
+          } else {
+            showToust(message: "Something Wrong!", state: ToastStates.ERROR);
+          }
         },
         builder: (BuildContext context, SocialLoginStates state) => Scaffold(
           appBar: AppBar(),
@@ -98,12 +102,11 @@ class SocialLoginScreen extends StatelessWidget {
                         builder: (BuildContext context) {
                           return defaultButton(
                               function: () {
-                                // if(formKey.currentState!.validate())
-                                // {
-                                //   SocialLoginCubit.get(context).loginUser(
-                                //       email: emailController.text,
-                                //       password: passwordController.text);
-                                // }
+                                if (formKey.currentState!.validate()) {
+                                  SocialLoginCubit.get(context).userLogin(
+                                      email: emailController.text,
+                                      password: passwordController.text);
+                                }
                               },
                               text: 'LOGIN');
                         },
