@@ -1,8 +1,5 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:social_app/layout/shop_app/cubit/cubit.dart';
-import 'package:social_app/models/shop_app/search_model.dart';
-import 'package:social_app/modules/NewsApp/web_view/web_view_screen.dart';
 //import 'package:news_app/modules/web_view/web_view_screen.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -185,64 +182,64 @@ Widget defaultTaskView({
   );
 }
 
-Widget defaultArticleItem(article, context) {
-  return InkWell(
-    onTap: () {
-      navigateTo(context, WebViewScreen(article['url']));
-    },
-    child: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Row(
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                  image: NetworkImage('${article['urlToImage']}'),
-                  fit: BoxFit.cover),
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: Container(
-              height: 120,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${article['title']}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  //SizedBox(height: 20,),
-                  Text(
-                    '${article['publishedAt']}',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+// Widget defaultArticleItem(article, context) {
+//   return InkWell(
+//     onTap: () {
+//       navigateTo(context, WebViewScreen(article['url']));
+//     },
+//     child: Padding(
+//       padding: const EdgeInsets.all(20.0),
+//       child: Row(
+//         //crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Container(
+//             width: 120,
+//             height: 120,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(10),
+//               image: DecorationImage(
+//                   image: NetworkImage('${article['urlToImage']}'),
+//                   fit: BoxFit.cover),
+//             ),
+//           ),
+//           SizedBox(
+//             width: 15,
+//           ),
+//           Expanded(
+//             child: Container(
+//               height: 120,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Expanded(
+//                     child: Text(
+//                       '${article['title']}',
+//                       style: TextStyle(
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                       maxLines: 4,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                   ),
+//                   //SizedBox(height: 20,),
+//                   Text(
+//                     '${article['publishedAt']}',
+//                     style: TextStyle(
+//                       fontSize: 15,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 
 Future navigateTo(context, widget) {
   return Navigator.push(
@@ -295,93 +292,93 @@ Color chooseToastColor(ToastStates state) {
   return color;
 }
 
-Widget buildFavItem(model, context) {
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            alignment: AlignmentDirectional.bottomStart,
-            children: [
-              Image(
-                image: NetworkImage(model.image ?? ''),
-                width: 160,
-                height: 100,
-              ),
-              if (model.discount != null && model.discount != 0)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(
-                    '  Discount  ',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.white,
-                      backgroundColor: Colors.red,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  model.name ?? 'No Name',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Text(
-                      model.price?.toString() ?? '0',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blue),
-                    ),
-                    SizedBox(width: 15),
-                    if (model.discount != null && model.discount != 0)
-                      Text(
-                        model.oldPrice.toString(),
-                        style: TextStyle(
-                            decoration: TextDecoration.lineThrough,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 9),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Icon(Icons.arrow_forward_ios),
-              SizedBox(height: 40),
-              IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: ShopAppCubit.get(context).favorites[model.id] ?? false
-                      ? Colors.red
-                      : Colors.grey,
-                ),
-                onPressed: () {
-                  ShopAppCubit.get(context).changeFavorites(model.id ?? 000);
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
+// Widget buildFavItem(model, context) {
+//   return Padding(
+//     padding: const EdgeInsets.all(10.0),
+//     child: Container(
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Stack(
+//             alignment: AlignmentDirectional.bottomStart,
+//             children: [
+//               Image(
+//                 image: NetworkImage(model.image ?? ''),
+//                 width: 160,
+//                 height: 100,
+//               ),
+//               if (model.discount != null && model.discount != 0)
+//                 Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 5),
+//                   child: Text(
+//                     '  Discount  ',
+//                     style: TextStyle(
+//                       fontSize: 10,
+//                       color: Colors.white,
+//                       backgroundColor: Colors.red,
+//                     ),
+//                   ),
+//                 ),
+//             ],
+//           ),
+//           SizedBox(width: 10),
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   model.name ?? 'No Name',
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                   maxLines: 2,
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//                 SizedBox(height: 20),
+//                 Row(
+//                   children: [
+//                     Text(
+//                       model.price?.toString() ?? '0',
+//                       style: TextStyle(
+//                           fontWeight: FontWeight.bold, color: Colors.blue),
+//                     ),
+//                     SizedBox(width: 15),
+//                     if (model.discount != null && model.discount != 0)
+//                       Text(
+//                         model.oldPrice.toString(),
+//                         style: TextStyle(
+//                             decoration: TextDecoration.lineThrough,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.blue),
+//                       ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//           SizedBox(width: 9),
+//           Column(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               SizedBox(height: 10),
+//               Icon(Icons.arrow_forward_ios),
+//               SizedBox(height: 40),
+//               IconButton(
+//                 icon: Icon(
+//                   Icons.favorite,
+//                   color: SocialAppCubit.get(context).favorites[model.id] ?? false
+//                       ? Colors.red
+//                       : Colors.grey,
+//                 ),
+//                 onPressed: () {
+//                   ShopAppCubit.get(context).changeFavorites(model.id ?? 000);
+//                 },
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }

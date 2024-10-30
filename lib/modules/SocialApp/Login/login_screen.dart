@@ -2,29 +2,24 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app/modules/SocialApp/Login/cubit/cubit.dart';
-import 'package:news_app/modules/SocialApp/Login/cubit/states.dart';
-import 'package:news_app/modules/SocialApp/register/register_screen.dart';
-import 'package:news_app/shared/components/components.dart';
+import 'package:social_app/modules/SocialApp/Login/cubit/cubit.dart';
+import 'package:social_app/modules/SocialApp/Login/cubit/states.dart';
+import 'package:social_app/modules/SocialApp/register/register_screen.dart';
+import 'package:social_app/shared/components/components.dart';
 
-class SocialLoginScreen extends StatelessWidget
-{
+class SocialLoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
   var formKey = GlobalKey<FormState>();
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context)=>SocialLoginCubit(),
-      child: BlocConsumer<SocialLoginCubit,SocialLoginStates>(
-        listener: (BuildContext context, SocialLoginStates state)
-        {
-          if (state is SocialLoginSuccessState)
-          {
-          }
+      create: (BuildContext context) => SocialLoginCubit(),
+      child: BlocConsumer<SocialLoginCubit, SocialLoginStates>(
+        listener: (BuildContext context, SocialLoginStates state) {
+          if (state is SocialLoginSuccessState) {}
         },
-        builder: (BuildContext context, SocialLoginStates state) =>Scaffold(
+        builder: (BuildContext context, SocialLoginStates state) => Scaffold(
           appBar: AppBar(),
           body: Center(
             child: SingleChildScrollView(
@@ -35,15 +30,19 @@ class SocialLoginScreen extends StatelessWidget
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('LOGIN' ,
+                      Text(
+                        'LOGIN',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Jannah',
                           fontSize: 30,
                         ),
                       ),
-                      SizedBox(height: 20,),
-                      Text('login now to browse our hot offers' ,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'login now to communicate with friends',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Jannah',
@@ -51,35 +50,34 @@ class SocialLoginScreen extends StatelessWidget
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(
+                        height: 30,
+                      ),
                       defaultFormField(
                           controller: emailController,
                           input: TextInputType.emailAddress,
-                          onValidator: (value)
-                          {
-                            if(value!.isEmpty)
-                            {
+                          onValidator: (value) {
+                            if (value!.isEmpty) {
                               return 'Email must not be empty';
                             }
                           },
                           text: 'Email Address',
                           prefix: Icons.email_outlined),
-                      SizedBox(height: 40,),
+                      SizedBox(
+                        height: 40,
+                      ),
                       defaultFormField(
                         controller: passwordController,
                         input: TextInputType.text,
-                        onValidator: (value)
-                        {
-                          if(value!.isEmpty)
-                          {
+                        onValidator: (value) {
+                          if (value!.isEmpty) {
                             return 'Password must not be empty';
                           }
                         },
                         text: 'Password',
                         prefix: Icons.lock_outlined,
                         suffix: SocialLoginCubit.get(context).suffix,
-                        onFieldSubmitted: (value)
-                        {
+                        onFieldSubmitted: (value) {
                           // if(formKey.currentState!.validate())
                           // {
                           //   SocialLoginCubit.get(context).loginUser(
@@ -87,20 +85,19 @@ class SocialLoginScreen extends StatelessWidget
                           //       password: passwordController.text);
                           // }
                         },
-                        onSuffix: ()
-                        {
+                        onSuffix: () {
                           SocialLoginCubit.get(context).changeVisibility();
                         },
                         isObscure: SocialLoginCubit.get(context).visibility,
                       ),
-                      SizedBox(height: 40,),
+                      SizedBox(
+                        height: 40,
+                      ),
                       ConditionalBuilder(
                         condition: state is! SocialLoginLoadingState,
-                        builder: (BuildContext context)
-                        {
+                        builder: (BuildContext context) {
                           return defaultButton(
-                              function: ()
-                              {
+                              function: () {
                                 // if(formKey.currentState!.validate())
                                 // {
                                 //   SocialLoginCubit.get(context).loginUser(
@@ -110,22 +107,27 @@ class SocialLoginScreen extends StatelessWidget
                               },
                               text: 'LOGIN');
                         },
-                        fallback: (BuildContext context) =>Center(child: CircularProgressIndicator()),
+                        fallback: (BuildContext context) =>
+                            Center(child: CircularProgressIndicator()),
                       ),
-                      SizedBox(height: 30,),
+                      SizedBox(
+                        height: 30,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Don\'t have an account?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold
-                            ),),
+                          Text(
+                            'Don\'t have an account?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           TextButton(
-                              onPressed: ()
-                              {
+                              onPressed: () {
                                 navigateTo(context, SocialRegisterScreen());
                               },
-                              child: Text('Create an account',style: TextStyle(color: Colors.blue),))
+                              child: Text(
+                                'Create an account',
+                                style: TextStyle(color: Colors.blue),
+                              ))
                         ],
                       ),
                     ],
@@ -135,8 +137,6 @@ class SocialLoginScreen extends StatelessWidget
             ),
           ),
         ),
-
-
       ),
     );
   }
