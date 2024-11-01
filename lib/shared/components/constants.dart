@@ -5,6 +5,7 @@ List<Map> newTasks = [];
 List<Map> doneTasks = [];
 List<Map> archivedTasks = [];
 String? token = '';
+String? uId = '';
 void signOut(context) {
   CacheHelper.removeData(key: 'token').then((value) {
     if (value) {

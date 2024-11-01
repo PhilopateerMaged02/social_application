@@ -72,115 +72,115 @@ Widget defaultFormField({
             : null,
       ),
     );
-Widget defaultTaskItem(Map model, context) => Dismissible(
-      key: Key(model['id'].toString()),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.blue,
-              child: Text(
-                '${model['time']}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${model['title']}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    '${model['date']}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            IconButton(
-              onPressed: () {
-                AppCubit.get(context)
-                    .updateDatabase(status: 'DONE', id: model['id']);
-              },
-              icon: Icon(
-                Icons.check_box,
-                color: Colors.green,
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            IconButton(
-              onPressed: () {
-                AppCubit.get(context)
-                    .updateDatabase(status: 'Archived', id: model['id']);
-              },
-              icon: Icon(
-                Icons.archive,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-      onDismissed: (direction) {
-        //AppCubit.get(context).deleteDatabase(id: model['id']);
-      },
-    );
-Widget defaultTaskView({
-  required List<Map> l,
-}) {
-  return ConditionalBuilder(
-    condition: l.length > 0,
-    builder: (context) => ListView.separated(
-        itemBuilder: (context, index) => defaultTaskItem(l[index], context),
-        separatorBuilder: (context, index) => Container(
-              width: double.infinity,
-              height: 3,
-              color: Colors.grey[200],
-            ),
-        itemCount: l.length),
-    fallback: (context) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.menu,
-            size: 100,
-            color: Colors.black54,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'There is no Tasks , Add Some Tasks',
-            style: TextStyle(color: Colors.grey, fontSize: 25),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+// Widget defaultTaskItem(Map model, context) => Dismissible(
+//       key: Key(model['id'].toString()),
+//       child: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Row(
+//           children: [
+//             CircleAvatar(
+//               radius: 50,
+//               backgroundColor: Colors.blue,
+//               child: Text(
+//                 '${model['time']}',
+//                 style: TextStyle(
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//             ),
+//             SizedBox(
+//               width: 20,
+//             ),
+//             Expanded(
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     '${model['title']}',
+//                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+//                   ),
+//                   SizedBox(
+//                     height: 8,
+//                   ),
+//                   Text(
+//                     '${model['date']}',
+//                     style: TextStyle(
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 15,
+//                         color: Colors.grey),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             SizedBox(
+//               width: 20,
+//             ),
+//             IconButton(
+//               onPressed: () {
+//                 AppCubit.get(context)
+//                     .updateDatabase(status: 'DONE', id: model['id']);
+//               },
+//               icon: Icon(
+//                 Icons.check_box,
+//                 color: Colors.green,
+//               ),
+//             ),
+//             SizedBox(
+//               width: 20,
+//             ),
+//             IconButton(
+//               onPressed: () {
+//                 AppCubit.get(context)
+//                     .updateDatabase(status: 'Archived', id: model['id']);
+//               },
+//               icon: Icon(
+//                 Icons.archive,
+//                 color: Colors.grey,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       onDismissed: (direction) {
+//         //AppCubit.get(context).deleteDatabase(id: model['id']);
+//       },
+//     );
+// Widget defaultTaskView({
+//   required List<Map> l,
+// }) {
+//   return ConditionalBuilder(
+//     condition: l.length > 0,
+//     builder: (context) => ListView.separated(
+//         itemBuilder: (context, index) => defaultTaskItem(l[index], context),
+//         separatorBuilder: (context, index) => Container(
+//               width: double.infinity,
+//               height: 3,
+//               color: Colors.grey[200],
+//             ),
+//         itemCount: l.length),
+//     fallback: (context) => Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Icon(
+//             Icons.menu,
+//             size: 100,
+//             color: Colors.black54,
+//           ),
+//           SizedBox(
+//             height: 20,
+//           ),
+//           Text(
+//             'There is no Tasks , Add Some Tasks',
+//             style: TextStyle(color: Colors.grey, fontSize: 25),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
 
 // Widget defaultArticleItem(article, context) {
 //   return InkWell(

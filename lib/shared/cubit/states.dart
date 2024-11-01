@@ -1,11 +1,14 @@
-abstract class AppStates {}
-class AppInitialStates extends AppStates{}
-class AppChangeBottomNavBarState extends AppStates{}
-class AppCreateDatabaseState extends AppStates{}
-class AppGetDatabaseState extends AppStates{}
-class AppInsertDatabaseState extends AppStates{}
-class AppChangeBottomSheetState extends AppStates{}
-class AppGetDatabaseLoadingState extends AppStates{}
-class AppUpdateDatabaseState extends AppStates{}
-class AppDeleteDatabaseState extends AppStates{}
-class AppChangeModeState extends AppStates{}
+abstract class SocialAppStates {}
+
+class SocialAppInitialState extends SocialAppStates {}
+
+class SocialAppGetUserLoadingState extends SocialAppStates {}
+
+class SocialAppGetUserSuccessState extends SocialAppStates {}
+
+class SocialAppGetUserErrorState extends SocialAppStates {
+  final String error;
+  SocialAppGetUserErrorState(String string, {required this.error});
+}
+
+class SocialAppChangeBottomNavState extends SocialAppStates {}

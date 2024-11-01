@@ -24,11 +24,11 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
       userCreate(
-          name: name,
-          email: email,
-          phone: phone,
-          uId: value.user!.uid,
-          isEmailVerified: isEmailVerified);
+        name: name,
+        email: email,
+        phone: phone,
+        uId: value.user!.uid,
+      );
       print(value.user!.email);
       print(value.user!.uid);
       //emit(SocialRegisterSuccessState());
@@ -42,14 +42,13 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
     required String email,
     required String phone,
     required String uId,
-    required bool isEmailVerified,
   }) {
     UserModel userModel = UserModel(
         email: email,
         name: name,
         phone: phone,
         uId: uId,
-        isEmailVerified: isEmailVerified);
+        isEmailVerified: false);
     FirebaseFirestore.instance
         .collection('users')
         .doc(uId)

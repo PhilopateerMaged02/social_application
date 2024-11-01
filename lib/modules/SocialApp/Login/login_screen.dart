@@ -2,10 +2,12 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/layout/social_layout.dart';
 import 'package:social_app/modules/SocialApp/Login/cubit/cubit.dart';
 import 'package:social_app/modules/SocialApp/Login/cubit/states.dart';
 import 'package:social_app/modules/SocialApp/register/register_screen.dart';
 import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache_helper.dart';
 
 class SocialLoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
@@ -18,8 +20,12 @@ class SocialLoginScreen extends StatelessWidget {
       child: BlocConsumer<SocialLoginCubit, SocialLoginStates>(
         listener: (BuildContext context, SocialLoginStates state) {
           if (state is SocialLoginSuccessState) {
-            showToust(message: "Welcome", state: ToastStates.SUCCESS);
-          } else {
+            CacheHelper.saveData(key: 'uId', value: state.uId).then((value) {
+              navigateToandKill(context, SocialLayout());
+            }).catchError((error) {
+              print(error.toString());
+            });
+          } else if (state is SocialLoginErrorState) {
             showToust(message: "Something Wrong!", state: ToastStates.ERROR);
           }
         },
