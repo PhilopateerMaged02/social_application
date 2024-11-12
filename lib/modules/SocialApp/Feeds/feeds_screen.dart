@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FeedsScreen extends StatelessWidget {
   @override
@@ -283,7 +284,9 @@ class FeedsScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      SocialAppCubit.get(context).getBucket();
+                    },
                     child: Row(
                       children: [
                         Icon(
@@ -304,7 +307,15 @@ class FeedsScreen extends StatelessWidget {
                     width: 15,
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      final bucket = await SocialAppCubit.get(context)
+                          .getBuckets("social");
+                      if (bucket != null) {
+                        print('Bucket retrieved successfully: ${bucket.name}');
+                      } else {
+                        print('Bucket not found or an error occurred.');
+                      }
+                    },
                     child: Row(
                       children: [
                         Icon(

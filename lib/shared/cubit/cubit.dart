@@ -42,14 +42,42 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
   }
 
   void getUserDataSupabase() async {
-    final res = await supabase.auth.admin.getUserById(uId!);
-    final user = res.user;
+    final user = supabase.auth.currentUser;
+
     if (user != null) {
-      userModel = UserModel.fromJson(user.toJson());
-      print(user.email);
+      final userMetadata = user.userMetadata;
+      userModel = UserModel(
+        uId: user.id,
+        email: user.email!,
+        name: userMetadata?['Display name'] ?? '',
+        phone: userMetadata?['Phone'] ?? '', bio: '', cover: '', image: '',
+        isEmailVerified: false,
+        // Add other fields as needed
+      );
+      print('Email: ${user.email}');
+      print('Name: ${userModel!.name}');
+      print('Phone: ${userModel!.phone}');
     } else {
-      print(user?.toJson());
+      print('No user is logged in');
     }
+  }
+
+  void getBucket() async {
+    final List<Bucket> buckets = await supabase.storage.listBuckets();
+  }
+
+  Future<Bucket?> getBuckets(String bucketName) async {
+    try {
+      final Bucket bucket = await supabase.storage.getBucket(bucketName);
+      return bucket;
+    } catch (e) {
+      print('Error retrieving bucket: $e');
+      return null;
+    }
+  }
+
+  void createBucket() async {
+    final String bucketId = await supabase.storage.createBucket('social');
   }
 
   int currentIndex = 0;
