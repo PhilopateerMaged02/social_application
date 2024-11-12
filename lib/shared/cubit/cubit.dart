@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'package:supabase/supabase.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/user/user_model.dart';
 import 'package:social_app/modules/SocialApp/Chats/chats_screen.dart';
 import 'package:social_app/modules/SocialApp/Feeds/feeds_screen.dart';
@@ -13,6 +18,7 @@ import 'package:social_app/shared/cubit/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/shared/network/local/cache_helper.dart';
 import 'package:path/path.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SocialAppCubit extends Cubit<SocialAppStates> {
   SocialAppCubit() : super(SocialAppInitialState());
@@ -20,19 +26,30 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
 
   UserModel? userModel;
   void getUserData() {
-    emit(SocialAppGetUserLoadingState());
-    FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
-      if (value.data() != null) {
-        userModel = UserModel.fromJson(value.data()!);
-        emit(SocialAppGetUserSuccessState());
-      } else {
-        print("User data is null.");
-        emit(SocialAppGetUserErrorState("User data is null.", error: ''));
-      }
-    }).catchError((error) {
-      print("Error retrieving user data: ${error.toString()}");
-      emit(SocialAppGetUserErrorState(error.toString(), error: 'errrr'));
-    });
+    // emit(SocialAppGetUserLoadingState());
+    // FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
+    //   if (value.data() != null) {
+    //     userModel = UserModel.fromJson(value.data()!);
+    //     emit(SocialAppGetUserSuccessState());
+    //   } else {
+    //     print("User data is null.");
+    //     emit(SocialAppGetUserErrorState("User data is null.", error: ''));
+    //   }
+    // }).catchError((error) {
+    //   print("Error retrieving user data: ${error.toString()}");
+    //   emit(SocialAppGetUserErrorState(error.toString(), error: 'errrr'));
+    // });
+  }
+
+  void getUserDataSupabase() async {
+    final res = await supabase.auth.admin.getUserById(uId!);
+    final user = res.user;
+    if (user != null) {
+      userModel = UserModel.fromJson(user.toJson());
+      print(user.email);
+    } else {
+      print(user?.toJson());
+    }
   }
 
   int currentIndex = 0;
@@ -51,5 +68,75 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
   void changeIndex(int index) {
     currentIndex = index;
     emit(SocialAppChangeBottomNavState());
+  }
+
+  File? profileImage;
+  File? coverImage;
+  ImagePicker picker = ImagePicker();
+
+  Future<void> getProfileImage() async {
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        profileImage = File(pickedFile.path);
+        emit(SocialAppPickedProfileImageSuccessState());
+      } else {
+        print('No image selected');
+        emit(SocialAppPickedProfileImageErrorState());
+        //return null;
+      }
+    } catch (e) {
+      print('Error selecting image: $e');
+      emit(SocialAppPickedProfileImageErrorState());
+      //return null;
+    }
+  }
+
+  Future<void> getCoverImage() async {
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        coverImage = File(pickedFile.path);
+        print(pickedFile.path);
+        emit(SocialAppPickedCoverImageSuccessState());
+      } else {
+        print('No image selected');
+        emit(SocialAppPickedCoverImageErrorState());
+        //return null;
+      }
+    } catch (e) {
+      print('Error selecting image: $e');
+      emit(SocialAppPickedCoverImageErrorState());
+      //return null;
+    }
+  }
+
+  void uploadProfile({
+    required String name,
+    required String phone,
+    required String bio,
+  }) {
+    emit(SocialAppUpdateUserLoadingState());
+    UserModel model = UserModel(
+        name: name,
+        phone: phone,
+        bio: bio,
+        isEmailVerified: false,
+        email: userModel!.email,
+        uId: userModel!.uId,
+        cover: userModel!.cover,
+        image: userModel!.image);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel!.uId)
+        .update(model.toMap())
+        .then((value) {
+      getUserDataSupabase();
+      emit(SocialAppUpdateUserSuccessState());
+    }).catchError((error) {
+      emit(SocialAppUpdateUserErrorState());
+    });
   }
 }

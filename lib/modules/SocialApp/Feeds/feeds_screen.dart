@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:social_app/shared/components/constants.dart';
+import 'package:social_app/shared/cubit/cubit.dart';
 
 class FeedsScreen extends StatelessWidget {
   @override
@@ -25,7 +26,7 @@ class FeedsScreen extends StatelessWidget {
               child: Text(
                 "Communicate with Friends Now",
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: Colors.blue[300],
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),

@@ -109,7 +109,7 @@ class SocialLoginScreen extends StatelessWidget {
                           return defaultButton(
                               function: () {
                                 if (formKey.currentState!.validate()) {
-                                  SocialLoginCubit.get(context).userLogin(
+                                  SocialLoginCubit.get(context).userLoginSupa(
                                       email: emailController.text,
                                       password: passwordController.text);
                                 }

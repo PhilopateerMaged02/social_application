@@ -12,3 +12,17 @@ class SocialAppGetUserErrorState extends SocialAppStates {
 }
 
 class SocialAppChangeBottomNavState extends SocialAppStates {}
+
+class SocialAppPickedProfileImageSuccessState extends SocialAppStates {}
+
+class SocialAppPickedProfileImageErrorState extends SocialAppStates {}
+
+class SocialAppPickedCoverImageSuccessState extends SocialAppStates {}
+
+class SocialAppPickedCoverImageErrorState extends SocialAppStates {}
+
+class SocialAppUpdateUserLoadingState extends SocialAppStates {}
+
+class SocialAppUpdateUserSuccessState extends SocialAppStates {}
+
+class SocialAppUpdateUserErrorState extends SocialAppStates {}

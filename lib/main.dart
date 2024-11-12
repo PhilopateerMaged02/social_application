@@ -8,13 +8,26 @@ import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/network/local/cache_helper.dart';
 import 'package:social_app/shared/network/remote/dio_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  const String SUPABASE_URL = 'https://slyghrmfgwhlncbvtjnc.supabase.co';
+  const String SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNseWdocm1mZ3dobG5jYnZ0am5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzExNjA1MjYsImV4cCI6MjA0NjczNjUyNn0.kINmFEl-ZNUt0AKXqcLqTtg0saPa_-_Bfzye5xqHKOY";
+
+  await Supabase.initialize(
+    url: 'https://slyghrmfgwhlncbvtjnc.supabase.co',
+    anonKey:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNseWdocm1mZ3dobG5jYnZ0am5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzExNjA1MjYsImV4cCI6MjA0NjczNjUyNn0.kINmFEl-ZNUt0AKXqcLqTtg0saPa_-_Bfzye5xqHKOY",
+  );
+
   await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
   DioHelper.init();
   await CacheHelper.init();
+
   Widget widget;
   uId = CacheHelper.getData(key: 'uId');
   if (uId != null) {
@@ -22,6 +35,7 @@ void main() async {
   } else {
     widget = SocialLoginScreen();
   }
+
   runApp(MyApp(startWidget: widget));
 }
 
@@ -30,10 +44,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.startWidget});
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => SocialAppCubit()..getUserData()),
-      ],
+    return BlocProvider(
+      create: (BuildContext context) => SocialAppCubit()..getUserDataSupabase(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: startWidget,

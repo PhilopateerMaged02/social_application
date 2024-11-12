@@ -12,6 +12,7 @@ import '../cubit/cubit.dart';
 Widget defaultButton({
   double width = double.infinity,
   Color background = Colors.blue,
+  Color textColor = Colors.white,
   bool isUpeerCase = true,
   double radius = 0,
   required Function() function,
@@ -26,7 +27,7 @@ Widget defaultButton({
           child: Text(
             isUpeerCase ? text.toUpperCase() : text,
             style: TextStyle(
-              color: Colors.white,
+              color: textColor,
             ),
           ),
         ),
