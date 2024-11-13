@@ -307,15 +307,7 @@ class FeedsScreen extends StatelessWidget {
                     width: 15,
                   ),
                   InkWell(
-                    onTap: () async {
-                      final bucket = await SocialAppCubit.get(context)
-                          .getBuckets("social");
-                      if (bucket != null) {
-                        print('Bucket retrieved successfully: ${bucket.name}');
-                      } else {
-                        print('Bucket not found or an error occurred.');
-                      }
-                    },
+                    onTap: () async {},
                     child: Row(
                       children: [
                         Icon(

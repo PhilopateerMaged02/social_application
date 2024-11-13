@@ -39,7 +39,7 @@ class EditProfileScreen extends StatelessWidget {
             actions: [
               TextButton(
                   onPressed: () {
-                    SocialAppCubit.get(context).uploadProfile(
+                    SocialAppCubit.get(context).updateUserData(
                         name: nameController.text,
                         phone: phoneController.text,
                         bio: bioController.text);
@@ -145,6 +145,40 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 55,
+                ),
+                if (SocialAppCubit.get(context).profileImage != null ||
+                    SocialAppCubit.get(context).coverImage != null)
+                  Row(
+                    children: [
+                      if (SocialAppCubit.get(context).profileImage != null)
+                        Expanded(
+                          child: defaultButton(
+                              function: () {
+                                SocialAppCubit.get(context)
+                                    .uploadProfileImageFile();
+                              },
+                              text: "Upload Profile",
+                              isUpeerCase: true),
+                        ),
+                      if (SocialAppCubit.get(context).profileImage != null &&
+                          SocialAppCubit.get(context).coverImage != null)
+                        SizedBox(
+                          width: 8,
+                        ),
+                      if (SocialAppCubit.get(context).coverImage != null)
+                        Expanded(
+                          child: defaultButton(
+                              function: () {
+                                SocialAppCubit.get(context)
+                                    .uploadCoverImageFile();
+                              },
+                              text: "Upload Cover",
+                              isUpeerCase: true),
+                        ),
+                    ],
+                  ),
+                SizedBox(
+                  height: 20,
                 ),
                 defaultFormField(
                     controller: nameController,
