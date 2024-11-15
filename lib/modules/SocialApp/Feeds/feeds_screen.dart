@@ -307,7 +307,9 @@ class FeedsScreen extends StatelessWidget {
                     width: 15,
                   ),
                   InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      SocialAppCubit.get(context).insertIntoTable();
+                    },
                     child: Row(
                       children: [
                         Icon(

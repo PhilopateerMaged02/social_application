@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:social_app/models/posts/posts_model.dart';
 import 'package:supabase/supabase.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,6 +29,7 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
   UserModel? userModel;
   File? profileImage;
   File? coverImage;
+  File? postImage;
   ImagePicker picker = ImagePicker();
   void getUserData() {
     // emit(SocialAppGetUserLoadingState());
@@ -227,6 +229,77 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
     final String bucketId = await supabase.storage.createBucket('social');
   }
 
+  PostsModel? postsModel;
+  void crewateNewPost({
+    required String name,
+    required String dateTime,
+    required String uId,
+    required String text,
+    required String image,
+    String? PostImage,
+  }) async {
+    try {
+      emit(SocialAppCreatePostLoadingState());
+      if (postImage != null) {
+        final avatarFile = File(postImage!.path);
+        final String fileName = Uri.file(avatarFile.path).pathSegments.last;
+
+        // Upload the file with upsert set to true to overwrite if the file already exists
+        final uploadResponse = await supabase.storage.from('social').upload(
+              'posts/post_image/$fileName', // File path
+              avatarFile,
+              fileOptions: const FileOptions(
+                  cacheControl: '3600', upsert: true), // Allow overwriting
+            );
+
+        // Get the public URL for the uploaded file
+        final String postImageUrl =
+            supabase.storage.from('social').getPublicUrl(
+                  'posts/post_image/$fileName',
+                );
+        print('Post Image URL: $postImageUrl');
+        PostsModel(
+            name: name,
+            uId: uId,
+            image: image,
+            dateTime: dateTime,
+            text: text,
+            postImage: PostImage ?? '');
+        emit(SocialAppCreatePostSuccessState());
+      } else {}
+
+      emit(SocialAppCreatePostSuccessState());
+    } catch (error) {
+      emit(SocialAppCreatePostErrorState());
+      print('Error uploading cover image: $error');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchPosts() async {
+    final data = await supabase.from('posts').select();
+
+    return data as List<Map<String, dynamic>>;
+  }
+
+  void insertIntoTable() async {
+    var response = supabase.auth.currentUser;
+
+    try {
+      final result = await supabase.from('posts').insert({
+        'uId': response!.id,
+        'name': userModel!.name,
+        'image': userModel!.image,
+        'postImage': userModel!.image, // Ensure this is correct
+        'dateTime':
+            DateTime.now().toIso8601String(), // Store current date and time
+        'text': userModel!.bio,
+      }).select();
+      print(result);
+    } catch (error) {
+      print('Error inserting data into the table: $error');
+    }
+  }
+
   int currentIndex = 0;
   List<Widget> Screens = [
     FeedsScreen(),
@@ -270,6 +343,26 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
           await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         coverImage = File(pickedFile.path);
+        print(pickedFile.path);
+        emit(SocialAppPickedCoverImageSuccessState());
+      } else {
+        print('No image selected');
+        emit(SocialAppPickedCoverImageErrorState());
+        //return null;
+      }
+    } catch (e) {
+      print('Error selecting image: $e');
+      emit(SocialAppPickedCoverImageErrorState());
+      //return null;
+    }
+  }
+
+  Future<void> getPostImage() async {
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        postImage = File(pickedFile.path);
         print(pickedFile.path);
         emit(SocialAppPickedCoverImageSuccessState());
       } else {

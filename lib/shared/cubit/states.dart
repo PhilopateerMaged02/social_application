@@ -26,3 +26,13 @@ class SocialAppUpdateUserLoadingState extends SocialAppStates {}
 class SocialAppUpdateUserSuccessState extends SocialAppStates {}
 
 class SocialAppUpdateUserErrorState extends SocialAppStates {}
+
+class SocialAppCreatePostLoadingState extends SocialAppStates {}
+
+class SocialAppCreatePostSuccessState extends SocialAppStates {}
+
+class SocialAppCreatePostErrorState extends SocialAppStates {}
+
+class SocialAppInsertIntoTableSuccessState extends SocialAppStates {}
+
+class SocialAppInsertIntoTableErrorState extends SocialAppStates {}
