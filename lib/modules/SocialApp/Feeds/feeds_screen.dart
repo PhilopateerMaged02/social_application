@@ -1,55 +1,102 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:social_app/shared/components/constants.dart';
+import 'package:social_app/models/posts/posts_model.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:social_app/shared/cubit/states.dart';
 
-class FeedsScreen extends StatelessWidget {
+class FeedsScreen extends StatefulWidget {
+  @override
+  State<FeedsScreen> createState() => _FeedsScreenState();
+}
+
+class _FeedsScreenState extends State<FeedsScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // Function to handle the refresh action
+  Future<void> _refreshPosts() async {
+    // Trigger fetching the posts again
+    setState(() async {
+      await SocialAppCubit.get(context)
+          .fetchAndFillPosts(); // Assuming getPosts fetches new posts from the server
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          Stack(alignment: AlignmentDirectional.bottomCenter, children: [
-            Card(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image(
-                image: NetworkImage(
-                    "https://img.freepik.com/free-psd/3d-rendering-mike-pointing_23-2149312575.jpg?t=st=1730479823~exp=1730483423~hmac=91b43646b83d000bd6568d75fd4ee162f7f5e0b98e3fb245ed918bdeb314690e&w=1480"),
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Text(
-                "Communicate with Friends Now",
-                style: TextStyle(
-                  color: Colors.blue[300],
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+    return BlocConsumer<SocialAppCubit, SocialAppStates>(
+      listener: (BuildContext context, SocialAppStates state) {},
+      builder: (BuildContext context, SocialAppStates state) {
+        return RefreshIndicator(
+          color: Colors.blue,
+          onRefresh:
+              _refreshPosts, // When pulled to refresh, it will trigger _refreshPosts
+          child: ConditionalBuilder(
+            condition: SocialAppCubit.get(context).posts.isNotEmpty,
+            builder: (BuildContext context) {
+              return SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Stack(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        children: [
+                          Card(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: Image(
+                              image: NetworkImage(
+                                  "https://img.freepik.com/free-psd/3d-rendering-mike-pointing_23-2149312575.jpg?t=st=1730479823~exp=1730483423~hmac=91b43646b83d000bd6568d75fd4ee162f7f5e0b98e3fb245ed918bdeb314690e&w=1480"),
+                              fit: BoxFit.cover,
+                              height: 200,
+                              width: double.infinity,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Text(
+                              "Communicate with Friends Now",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        ]),
+                    ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => buildPostItem(
+                            SocialAppCubit.get(context).posts[index], context),
+                        separatorBuilder: (context, index) => SizedBox(
+                              height: 1,
+                            ),
+                        itemCount: SocialAppCubit.get(context).posts.length)
+                  ],
                 ),
-              ),
-            )
-          ]),
-          ListView.separated(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => buildPostItem(context),
-              separatorBuilder: (context, index) => SizedBox(
-                    height: 2,
-                  ),
-              itemCount: 10)
-        ],
-      ),
+              );
+            },
+            fallback: (BuildContext context) {
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Colors.blue,
+              ));
+            },
+          ),
+        );
+      },
     );
   }
 
-  Widget buildPostItem(context) => Card(
+  Widget buildPostItem(PostsModel postModel, context) => Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 8,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -57,8 +104,7 @@ class FeedsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
                     radius: 25,
-                    backgroundImage: NetworkImage(
-                        "https://img.freepik.com/free-photo/portrait-sad-young-student-getting-bullied-school_23-2151395774.jpg?ga=GA1.1.960460351.1727711267"),
+                    backgroundImage: NetworkImage(postModel.image),
                   ),
                 ),
                 Column(
@@ -67,7 +113,7 @@ class FeedsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          "Philopateer Maged",
+                          postModel.name,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
@@ -82,7 +128,7 @@ class FeedsScreen extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      "January 21 , 2025 at 11:00 AM",
+                      postModel.dateTime,
                       style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
@@ -100,116 +146,33 @@ class FeedsScreen extends StatelessWidget {
               color: Colors.grey[300],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
               child: Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                style: TextStyle(fontWeight: FontWeight.w400),
+                postModel.text,
+                style: TextStyle(fontWeight: FontWeight.w500),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Container(
-                width: double.infinity,
-                child: Wrap(
-                  children: [
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        minWidth: 1,
-                        onPressed: () {},
-                        child: Text(
-                          "#software",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
+            if (postModel.postImage != '')
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(postModel.postImage ?? ''),
                     ),
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        minWidth: 1,
-                        onPressed: () {},
-                        child: Text(
-                          "#software",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        minWidth: 1,
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        onPressed: () {},
-                        child: Text(
-                          "#software",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        minWidth: 1,
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        onPressed: () {},
-                        child: Text(
-                          "#software_development",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        minWidth: 1,
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        onPressed: () {},
-                        child: Text(
-                          "#software_development",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                      child: MaterialButton(
-                        minWidth: 1,
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        onPressed: () {},
-                        child: Text(
-                          "#software_development",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                height: 120,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(
-                        "https://img.freepik.com/free-photo/young-person-presenting-empty-copyspace_1048-17665.jpg?t=st=1730484096~exp=1730487696~hmac=7afe40a7acc60e1aa9da996993a72531dc58e72793f9889f63eb83f14920a88e&w=1480"),
                   ),
                 ),
               ),
-            ),
             Row(
               children: [
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: InkWell(
-                    onTap: () {},
                     child: Row(
                       children: [
                         Icon(
@@ -220,7 +183,7 @@ class FeedsScreen extends StatelessWidget {
                           width: 5,
                         ),
                         Text(
-                          "1.2k",
+                          postModel.postLikes.toString(),
                           style: TextStyle(color: Colors.grey),
                         )
                       ],
@@ -231,7 +194,6 @@ class FeedsScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: InkWell(
-                    onTap: () {},
                     child: Row(
                       children: [
                         Icon(
@@ -242,7 +204,7 @@ class FeedsScreen extends StatelessWidget {
                           width: 3,
                         ),
                         Text(
-                          "521",
+                          "0",
                           style: TextStyle(color: Colors.grey),
                         ),
                         SizedBox(
@@ -270,7 +232,7 @@ class FeedsScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 18,
                     backgroundImage: NetworkImage(
-                        "https://img.freepik.com/free-photo/portrait-sad-young-student-getting-bullied-school_23-2151395774.jpg?ga=GA1.1.960460351.1727711267"),
+                        SocialAppCubit.get(context).userModel!.image),
                   ),
                   SizedBox(
                     width: 5,
@@ -285,7 +247,12 @@ class FeedsScreen extends StatelessWidget {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      SocialAppCubit.get(context).getBucket();
+                      setState(() {
+                        SocialAppCubit.get(context).toggleLike(
+                            postId: postModel.id.toInt(),
+                            userId: postModel.uId);
+                      });
+                      print(postModel.id);
                     },
                     child: Row(
                       children: [
@@ -305,26 +272,6 @@ class FeedsScreen extends StatelessWidget {
                   ),
                   SizedBox(
                     width: 15,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      SocialAppCubit.get(context).insertIntoTable();
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          IconlyBroken.upload,
-                          color: Colors.green,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Share",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
                   ),
                 ],
               ),

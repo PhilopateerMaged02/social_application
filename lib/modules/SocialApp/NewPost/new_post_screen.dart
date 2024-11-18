@@ -1,148 +1,237 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:social_app/shared/cubit/cubit.dart';
+import 'package:social_app/shared/cubit/states.dart';
 
-class NewPostScreen extends StatelessWidget {
+class NewPostScreen extends StatefulWidget {
+  @override
+  State<NewPostScreen> createState() => _NewPostScreenState();
+}
+
+class _NewPostScreenState extends State<NewPostScreen> {
+  var textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(IconlyBroken.arrowLeft2)),
-        backgroundColor: Colors.white,
-        title: Text(
-          "Create Post",
-          style: TextStyle(fontWeight: FontWeight.w500),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              "POST",
-              style: TextStyle(color: Colors.blue, fontSize: 16),
+    return BlocConsumer<SocialAppCubit, SocialAppStates>(
+      listener: (BuildContext context, state) {},
+      builder: (BuildContext context, Object? state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(IconlyBroken.arrowLeft2)),
+            backgroundColor: Colors.white,
+            title: Text(
+              "Create Post",
+              style: TextStyle(fontWeight: FontWeight.w500),
             ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  final cubit = SocialAppCubit.get(context);
+
+                  if (cubit.postImage == null) {
+                    // No image, directly insert into the table
+                    cubit.insertIntoTable(
+                      name: cubit.userModel!.name,
+                      dateTime: DateTime.now().toString(),
+                      image: cubit.userModel!.image,
+                      text: textController.text,
+                      uId: cubit.userModel!.uId,
+                    );
+                    setState(() {
+                      SocialAppCubit.get(context).fetchAndFillPosts();
+                    });
+                    Navigator.pop(context);
+                  } else {
+                    await cubit.uploadImagePost(); // Ensure it's awaited
+                    cubit.insertIntoTable(
+                      name: cubit.userModel!.name,
+                      dateTime: DateTime.now().toString(),
+                      image: cubit.userModel!.image,
+                      text: textController.text,
+                      postImage:
+                          cubit.postImageURL, // Use the uploaded image URL
+                      uId: cubit.userModel!.uId,
+                    );
+                    setState(() {
+                      SocialAppCubit.get(context).fetchAndFillPosts();
+                    });
+                    Navigator.pop(context);
+                    //SocialAppCubit.get(context).postImageURL = null;
+                  }
+                },
+                child: Text(
+                  "POST",
+                  style: TextStyle(color: Colors.blue, fontSize: 16),
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+            ],
           ),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              //crossAxisAlignment: CrossAxisAlignment.start,
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(
-                      "https://img.freepik.com/free-photo/portrait-sad-young-student-getting-bullied-school_23-2151395774.jpg?ga=GA1.1.960460351.1727711267"),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                if (state is SocialAppCreatePostLoadingState)
+                  LinearProgressIndicator(),
+                if (state is SocialAppCreatePostLoadingState)
+                  SizedBox(
+                    height: 15,
+                  ),
+                Row(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage: NetworkImage(
+                          SocialAppCubit.get(context).userModel!.image),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Text(
+                              SocialAppCubit.get(context).userModel!.name,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.verified,
+                              size: 20,
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
                         Text(
-                          "Philopateer Maged",
+                          "Public",
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.verified,
-                          size: 20,
-                          color: Colors.blue,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700]),
                         ),
                       ],
                     ),
-                    Text(
-                      "Public",
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700]),
-                    ),
                   ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "What is on your mind?",
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
-                //minLines: 3,
-                maxLines: 22),
-            SizedBox(
-              height: 30,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Row(
-                    children: [
-                      Icon(
-                        IconlyBroken.image,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "Add Image",
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
                 ),
                 SizedBox(
-                  width: 100,
+                  height: 20,
+                ),
+                TextFormField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "What is on your mind?",
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    //minLines: 3,
+                    maxLines: 10),
+                SizedBox(
+                  height: 80,
+                ),
+                if (SocialAppCubit.get(context).postImage != null)
+                  Container(
+                    height: 150,
+                    child: Stack(
+                      fit: StackFit.loose,
+                      alignment: AlignmentDirectional.topEnd,
+                      children: [
+                        Image(
+                          image:
+                              FileImage(SocialAppCubit.get(context).postImage!),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            child: IconButton(
+                              icon: Icon(Icons.close),
+                              color: Colors.white,
+                              onPressed: () {
+                                setState(() {
+                                  SocialAppCubit.get(context).postImage = null;
+                                  SocialAppCubit.get(context).postImageURL =
+                                      null;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(
+                  height: 100,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "# tags",
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.w800),
+                    InkWell(
+                      onTap: () {
+                        SocialAppCubit.get(context).getPostImage();
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            IconlyBroken.image,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Add Image",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w800),
+                          ),
+                        ],
                       ),
+                    ),
+                    SizedBox(
+                      width: 100,
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "# tags",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

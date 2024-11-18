@@ -36,3 +36,21 @@ class SocialAppCreatePostErrorState extends SocialAppStates {}
 class SocialAppInsertIntoTableSuccessState extends SocialAppStates {}
 
 class SocialAppInsertIntoTableErrorState extends SocialAppStates {}
+
+class SocialAppGetPostsLoadingState extends SocialAppStates {}
+
+class SocialAppGetPostsSuccessState extends SocialAppStates {}
+
+class SocialAppGetPostsErrorState extends SocialAppStates {}
+
+class SocialAppAddLikeSuccessState extends SocialAppStates {}
+
+class SocialAppAddLikeErrorState extends SocialAppStates {}
+
+class SocialAppToggleLikeLoadingState extends SocialAppStates {}
+
+class SocialAppUnlikeSuccessState extends SocialAppStates {}
+
+class SocialAppLikeSuccessState extends SocialAppStates {}
+
+class SocialAppToggleLikeErrorState extends SocialAppStates {}

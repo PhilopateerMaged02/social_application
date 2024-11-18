@@ -175,6 +175,12 @@ class SettingsScreen extends StatelessWidget {
                       )),
                 ],
               ),
+              Spacer(),
+              defaultButton(
+                  function: () {
+                    SocialAppCubit.get(context).signOut(context);
+                  },
+                  text: "Log Out"),
             ],
           ),
         );

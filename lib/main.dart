@@ -39,16 +39,25 @@ void main() async {
   runApp(MyApp(startWidget: widget));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final Widget startWidget;
   const MyApp({super.key, required this.startWidget});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     return BlocProvider(
-      create: (BuildContext context) => SocialAppCubit()..getUserDataSupabase(),
+      create: (BuildContext context) => SocialAppCubit()
+        ..getUserDataSupabase()
+        ..fetchAndFillPosts(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: startWidget,
+        home: widget.startWidget,
         theme: ThemeData.light(),
       ),
     );
