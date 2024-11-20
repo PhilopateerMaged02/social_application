@@ -52,7 +52,14 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
       final AuthResponse res = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {'Display name': name, 'Phone': phone},
+        data: {
+          'Display name': name,
+          'Phone': phone,
+          'profile_image':
+              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+          'cover_image':
+              "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+        },
       );
 
       if (res.user != null && res.session != null) {
