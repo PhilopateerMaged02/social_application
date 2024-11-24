@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/layout/social_layout.dart';
+import 'package:social_app/modules/SocialApp/Login/login_screen.dart';
 import 'package:social_app/modules/SocialApp/register/cubit/cubit.dart';
 import 'package:social_app/modules/SocialApp/register/cubit/states.dart';
 import 'package:social_app/shared/components/components.dart';

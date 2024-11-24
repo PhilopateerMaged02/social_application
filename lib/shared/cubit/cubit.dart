@@ -500,6 +500,30 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
     uId = '';
   }
 
+  List<UserModel> users = [];
+  Future<List<UserModel>> getAllUsers() async {
+    final response = await supabase.from('users').select();
+    return (response as List<dynamic>)
+        .map((item) => UserModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> fetchAndFillUsers() async {
+    emit(SocialAppGetUsersLoadingState());
+    try {
+      final fetchedUsers = await getAllUsers();
+      users = fetchedUsers;
+      for (var user in users) {
+        print(user);
+        print(users.length);
+        emit(SocialAppGetUsersSuccessState());
+      }
+    } catch (error) {
+      print('Error filling posts list: $error');
+      emit(SocialAppGetUsersErrorState());
+    }
+  }
+
   // void uploadProfile({
   //   required String name,
   //   required String phone,

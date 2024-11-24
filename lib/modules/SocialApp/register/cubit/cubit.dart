@@ -61,9 +61,22 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
               "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
         },
       );
-
+      supabase.from('users').insert({
+        'uId': res.user!.id,
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'bio': '',
+        'cover':
+            "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png",
+        'image':
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+      }).then((value) {
+        emit(SocialRegisterTableSuccessState());
+      }).catchError((error) {
+        emit(SocialRegisterTableErrorState());
+      });
       if (res.user != null && res.session != null) {
-        // If sign-up is successful, create the user in Firestore
         userCreate(
           name: name,
           email: email,
@@ -72,13 +85,11 @@ class SocialRegisterCubit extends Cubit<SocialRegisterStates> {
         );
         emit(SocialRegisterSuccessState());
       } else {
-        // Log additional information for debugging
         debugPrint('Sign-up failed: session or user is null');
         emit(SocialRegisterErrorState(
             "Failed to register user: session or user is null"));
       }
     } catch (error) {
-      // Log the error to the console for debugging
       debugPrint('Error during registration: $error');
       emit(SocialRegisterErrorState(error.toString()));
     }

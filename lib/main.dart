@@ -54,7 +54,8 @@ class _MyAppState extends State<MyApp> {
     return BlocProvider(
       create: (BuildContext context) => SocialAppCubit()
         ..getUserDataSupabase()
-        ..fetchAndFillPosts(),
+        ..fetchAndFillPosts()
+        ..fetchAndFillUsers(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: widget.startWidget,

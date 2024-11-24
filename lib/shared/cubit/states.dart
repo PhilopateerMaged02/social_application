@@ -54,3 +54,9 @@ class SocialAppUnlikeSuccessState extends SocialAppStates {}
 class SocialAppLikeSuccessState extends SocialAppStates {}
 
 class SocialAppToggleLikeErrorState extends SocialAppStates {}
+
+class SocialAppGetUsersLoadingState extends SocialAppStates {}
+
+class SocialAppGetUsersSuccessState extends SocialAppStates {}
+
+class SocialAppGetUsersErrorState extends SocialAppStates {}

@@ -36,7 +36,8 @@ class _FeedsScreenState extends State<FeedsScreen> {
           onRefresh:
               _refreshPosts, // When pulled to refresh, it will trigger _refreshPosts
           child: ConditionalBuilder(
-            condition: SocialAppCubit.get(context).posts.isNotEmpty,
+            condition: SocialAppCubit.get(context).posts.isNotEmpty &&
+                SocialAppCubit.get(context).userModel != null,
             builder: (BuildContext context) {
               return SingleChildScrollView(
                 physics: BouncingScrollPhysics(),

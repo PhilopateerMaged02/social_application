@@ -181,7 +181,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     ),
                   ),
                 SizedBox(
-                  height: 100,
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
