@@ -60,3 +60,9 @@ class SocialAppGetUsersLoadingState extends SocialAppStates {}
 class SocialAppGetUsersSuccessState extends SocialAppStates {}
 
 class SocialAppGetUsersErrorState extends SocialAppStates {}
+
+class SocialAppGetMessagesLoadingState extends SocialAppStates {}
+
+class SocialAppGetMessagesSuccessState extends SocialAppStates {}
+
+class SocialAppGetMessagesErrorState extends SocialAppStates {}

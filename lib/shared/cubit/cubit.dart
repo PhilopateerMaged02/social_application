@@ -24,6 +24,8 @@ import 'package:social_app/shared/network/local/cache_helper.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../models/messages/messages_model.dart';
+
 class SocialAppCubit extends Cubit<SocialAppStates> {
   SocialAppCubit() : super(SocialAppInitialState());
   static SocialAppCubit get(context) => BlocProvider.of(context);
@@ -34,6 +36,9 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
   File? postImage;
   String? postImageURL;
   ImagePicker picker = ImagePicker();
+  var chatID = "";
+  var userName;
+  var profileImagee = "";
   void getUserData() {
     // emit(SocialAppGetUserLoadingState());
     // FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
@@ -522,6 +527,132 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
       print('Error filling posts list: $error');
       emit(SocialAppGetUsersErrorState());
     }
+  }
+
+  void createChatSession1(UserModel userModel) async {
+    await supabase.from('chat').insert({
+      'uId1': supabase.auth.currentUser!.id,
+      'uId2': userModel.uId,
+    });
+  }
+
+  Future<void> createChatSession(UserModel userModel) async {
+    try {
+      // Check if a chat session already exists
+      final chatId = await getChatIdIfExists(userModel.uId);
+
+      if (chatId != null) {
+        print('Chat session already exists with ID: $chatId');
+        chatID = chatId.toString();
+        return;
+      }
+
+      final currentUserId = supabase.auth.currentUser!.id;
+
+      // Sort user IDs to maintain consistent order
+      final sortedUser1 = currentUserId.compareTo(userModel.uId) < 0
+          ? currentUserId
+          : userModel.uId;
+      final sortedUser2 = currentUserId.compareTo(userModel.uId) < 0
+          ? userModel.uId
+          : currentUserId;
+
+      // Insert a new chat session
+      await supabase.from('chat').insert({
+        'uId1': sortedUser1,
+        'uId2': sortedUser2,
+      });
+
+      print('Chat session created successfully.');
+    } catch (e) {
+      print('Error creating chat session: $e');
+    }
+  }
+
+  Future<int?> getChatIdIfExists(String userChosenId) async {
+    try {
+      final currentUserId = supabase.auth.currentUser!.id;
+
+      // Sort user IDs to maintain consistent order
+      final sortedUser1 = currentUserId.compareTo(userChosenId) < 0
+          ? currentUserId
+          : userChosenId;
+      final sortedUser2 = currentUserId.compareTo(userChosenId) < 0
+          ? userChosenId
+          : currentUserId;
+
+      // Query the chat table for an existing session
+      final response = await supabase
+          .from('chat')
+          .select('id')
+          .eq('uId1', sortedUser1)
+          .eq('uId2', sortedUser2)
+          .maybeSingle();
+
+      if (response != null) {
+        return response['id'] as int; // Return the chat session ID
+      }
+
+      return null; // No chat session exists
+    } catch (e) {
+      print('Error fetching chat ID: $e');
+      return null; // Handle errors by returning null
+    }
+  }
+
+  void sendMessage({
+    required senderId,
+    required text,
+    required at,
+    required chatId,
+  }) async {
+    await supabase.from('message').insert({
+      'uId_sender': senderId,
+      'text': text,
+      'chat_id': chatId,
+      'time': at,
+    });
+  }
+
+  List<MessagesModel> messages = [];
+
+  Future<List<MessagesModel>> getMessages(chatId) async {
+    final response = await supabase
+        .from('message')
+        .select()
+        .eq('chat_id', chatId)
+        .order('time', ascending: true);
+
+    return (response as List<dynamic>)
+        .map((item) => MessagesModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> fetchAndFillMessages({required chatId}) async {
+    emit(SocialAppGetMessagesLoadingState());
+    try {
+      final fetchedMessage = await getMessages(chatId);
+      messages = fetchedMessage;
+      for (var message in messages) {
+        print(message);
+        print(messages.length);
+        emit(SocialAppGetMessagesSuccessState());
+      }
+    } catch (error) {
+      print('Error filling messages list: $error');
+      emit(SocialAppGetMessagesErrorState());
+    }
+  }
+
+  void printMessagesList() {
+    for (var message in messages) {
+      print(message);
+    }
+  }
+
+  void updateMessagesList(chatId) async {
+    messages = await getMessages(chatId);
+    printMessagesList(); // Optionally print after updating the list
   }
 
   // void uploadProfile({

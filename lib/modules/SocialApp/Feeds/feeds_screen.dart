@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:social_app/models/posts/posts_model.dart';
+import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/cubit/states.dart';
 
@@ -239,7 +240,9 @@ class _FeedsScreenState extends State<FeedsScreen> {
                     width: 5,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      print(uId);
+                    },
                     child: Text(
                       "Write a Comment...",
                       style: TextStyle(color: Colors.grey),
