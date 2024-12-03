@@ -20,10 +20,11 @@ class _NewPostScreenState extends State<NewPostScreen> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(IconlyBroken.arrowLeft2)),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(IconlyBroken.arrowLeft2),
+            ),
             backgroundColor: Colors.white,
             title: Text(
               "Create Post",
@@ -35,7 +36,6 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   final cubit = SocialAppCubit.get(context);
 
                   if (cubit.postImage == null) {
-                    // No image, directly insert into the table
                     cubit.insertIntoTable(
                       name: cubit.userModel!.name,
                       dateTime: DateTime.now().toString(),
@@ -48,21 +48,19 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     });
                     Navigator.pop(context);
                   } else {
-                    await cubit.uploadImagePost(); // Ensure it's awaited
+                    await cubit.uploadImagePost();
                     cubit.insertIntoTable(
                       name: cubit.userModel!.name,
                       dateTime: DateTime.now().toString(),
                       image: cubit.userModel!.image,
                       text: textController.text,
-                      postImage:
-                          cubit.postImageURL, // Use the uploaded image URL
+                      postImage: cubit.postImageURL,
                       uId: cubit.userModel!.uId,
                     );
                     setState(() {
                       SocialAppCubit.get(context).fetchAndFillPosts();
                     });
                     Navigator.pop(context);
-                    //SocialAppCubit.get(context).postImageURL = null;
                   }
                 },
                 child: Text(
@@ -70,33 +68,27 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   style: TextStyle(color: Colors.blue, fontSize: 16),
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
+              SizedBox(width: 10),
             ],
           ),
           body: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (state is SocialAppCreatePostLoadingState)
                   LinearProgressIndicator(),
                 if (state is SocialAppCreatePostLoadingState)
-                  SizedBox(
-                    height: 15,
-                  ),
+                  SizedBox(height: 15),
                 Row(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
                       radius: 25,
                       backgroundImage: NetworkImage(
-                          SocialAppCubit.get(context).userModel!.image),
+                        SocialAppCubit.get(context).userModel!.image,
+                      ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -107,9 +99,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(
-                              width: 5,
-                            ),
+                            SizedBox(width: 5),
                             Icon(
                               Icons.verified,
                               size: 20,
@@ -128,30 +118,28 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 TextFormField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "What is on your mind?",
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                      ),
+                  controller: textController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "What is on your mind?",
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
                     ),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    //minLines: 3,
-                    maxLines: 10),
-                SizedBox(
-                  height: 80,
+                  ),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  minLines: 3, // Ensuring the text field adjusts in height
+                  maxLines: 10,
                 ),
+                SizedBox(height: 20),
                 if (SocialAppCubit.get(context).postImage != null)
                   Container(
-                    height: 150,
+                    height: MediaQuery.of(context).size.height *
+                        0.3, // Adjust height based on screen size
                     child: Stack(
                       fit: StackFit.loose,
                       alignment: AlignmentDirectional.topEnd,
@@ -159,6 +147,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         Image(
                           image:
                               FileImage(SocialAppCubit.get(context).postImage!),
+                          fit: BoxFit.cover, // Ensure the image scales properly
                         ),
                         Padding(
                           padding: const EdgeInsets.all(5.0),
@@ -180,12 +169,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                       ],
                     ),
                   ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     InkWell(
                       onTap: () {
@@ -197,9 +183,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             IconlyBroken.image,
                             color: Colors.blue,
                           ),
-                          SizedBox(
-                            width: 5,
-                          ),
+                          SizedBox(width: 5),
                           Text(
                             "Add Image",
                             style: TextStyle(
@@ -209,9 +193,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      width: 100,
-                    ),
+                    SizedBox(width: 100),
                     Row(
                       children: [
                         TextButton(

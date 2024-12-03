@@ -12,11 +12,14 @@ class ChatsScreen extends StatelessWidget {
     return BlocConsumer<SocialAppCubit, SocialAppStates>(
       listener: (BuildContext context, state) {},
       builder: (BuildContext context, Object? state) {
-        return ListView.separated(
-            itemBuilder: (context, index) =>
-                itemBuilder(SocialAppCubit.get(context).users[index], context),
-            separatorBuilder: (context, index) => Container(),
-            itemCount: SocialAppCubit.get(context).users.length);
+        return Container(
+          color: Colors.white,
+          child: ListView.separated(
+              itemBuilder: (context, index) => itemBuilder(
+                  SocialAppCubit.get(context).users[index], context),
+              separatorBuilder: (context, index) => Container(),
+              itemCount: SocialAppCubit.get(context).users.length),
+        );
       },
     );
   }

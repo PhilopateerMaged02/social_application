@@ -94,193 +94,202 @@ class _FeedsScreenState extends State<FeedsScreen> {
     );
   }
 
-  Widget buildPostItem(PostsModel postModel, context) => Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: 8,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundImage: NetworkImage(postModel.image),
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          postModel.name,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.verified,
-                          size: 20,
-                          color: Colors.blue,
-                        ),
-                      ],
-                    ),
-                    Text(
-                      postModel.dateTime,
-                      style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
-              ],
-            ),
-            Container(
-              height: 1,
-              width: double.infinity,
-              color: Colors.grey[300],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-              child: Text(
-                postModel.text,
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-            if (postModel.postImage != '')
+  Widget buildPostItem(PostsModel postModel, context) {
+    return Card(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      elevation: 8,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: Container(
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(postModel.postImage ?? ''),
-                    ),
-                  ),
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  radius: 25,
+                  backgroundImage: NetworkImage(postModel.image),
                 ),
               ),
-            Row(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: InkWell(
-                    child: Row(
-                      children: [
-                        Icon(
-                          IconlyBroken.heart,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          postModel.postLikes.toString(),
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: InkWell(
-                    child: Row(
-                      children: [
-                        Icon(
-                          IconlyBroken.chat,
-                          color: Colors.amber,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          "0",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          "comments",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 1,
-              width: double.infinity,
-              color: Colors.grey[300],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundImage: NetworkImage(
-                        SocialAppCubit.get(context).userModel!.image),
+                  Row(
+                    children: [
+                      Text(
+                        postModel.name,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.verified,
+                        size: 20,
+                        color: Colors.blue,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      print(uId);
-                    },
-                    child: Text(
-                      "Write a Comment...",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  Spacer(),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        SocialAppCubit.get(context).toggleLike(
-                            postId: postModel.id.toInt(),
-                            userId: postModel.uId);
-                      });
-                      print(postModel.id);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          IconlyBroken.heart,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Like",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 15,
+                  Text(
+                    postModel.dateTime,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600]),
                   ),
                 ],
               ),
+              Spacer(),
+              IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
+            ],
+          ),
+          Container(
+            height: 1,
+            width: double.infinity,
+            color: Colors.grey[300],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+            child: Text(
+              postModel.text,
+              style: TextStyle(fontWeight: FontWeight.w500),
             ),
-          ],
-        ),
-      );
+          ),
+          if (postModel.postImage != '')
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(postModel.postImage ?? ''),
+                  ),
+                ),
+              ),
+            ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      SocialAppCubit.get(context).toggleLike(
+                          postId: postModel.id.toInt(), userId: postModel.uId);
+                      postModel.postLikes = postModel.postLikes == 0
+                          ? postModel.postLikes + 1
+                          : postModel.postLikes -
+                              1; // Update the likes count locally
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        IconlyBroken.heart,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        postModel.postLikes.toString(),
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: InkWell(
+                  child: Row(
+                    children: [
+                      Icon(
+                        IconlyBroken.chat,
+                        color: Colors.amber,
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        "0",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        "comments",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            height: 1,
+            width: double.infinity,
+            color: Colors.grey[300],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage(
+                      SocialAppCubit.get(context).userModel!.image),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                TextButton(
+                  onPressed: () {
+                    print(uId);
+                  },
+                  child: Text(
+                    "Write a Comment...",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      SocialAppCubit.get(context).toggleLike(
+                          postId: postModel.id.toInt(), userId: postModel.uId);
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        IconlyBroken.heart,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Like",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

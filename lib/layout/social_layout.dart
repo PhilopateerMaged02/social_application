@@ -33,7 +33,7 @@ class SocialLayout extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(onPressed: () {}, icon: Icon(IconlyBroken.search)),
+              //IconButton(onPressed: () {}, icon: Icon(IconlyBroken.search)),
               IconButton(
                   onPressed: () {}, icon: Icon(IconlyBroken.notification)),
             ],
@@ -41,6 +41,7 @@ class SocialLayout extends StatelessWidget {
           body: SocialAppCubit.get(context)
               .Screens[SocialAppCubit.get(context).currentIndex],
           bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: Colors.white,
               currentIndex: SocialAppCubit.get(context).currentIndex,
               onTap: (index) {
                 SocialAppCubit.get(context).changeIndex(index);
@@ -58,7 +59,7 @@ class SocialLayout extends StatelessWidget {
                   label: "Chats",
                 ),
                 BottomNavigationBarItem(
-                    icon: Icon(IconlyBroken.location), label: "Users"),
+                    icon: Icon(IconlyBroken.search), label: "Search"),
                 BottomNavigationBarItem(
                     icon: Icon(IconlyBroken.setting), label: "Settings"),
               ]),

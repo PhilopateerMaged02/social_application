@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_app/main.dart';
 import 'package:social_app/models/posts/posts_model.dart';
 import 'package:social_app/modules/SocialApp/Login/login_screen.dart';
 import 'package:social_app/shared/components/components.dart';
@@ -377,7 +379,7 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
       final response = await supabase
           .from('likes')
           .select()
-          .eq('post_id', postId)
+          .eq('post_id', postId) // Ensure this is correct
           .eq('uId', userId);
 
       final List<dynamic> likes = response as List;
@@ -388,8 +390,9 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
             .delete()
             .eq('post_id', postId)
             .eq('uId', userId);
-        await supabase
-            .rpc('decrement_likes_count_bigintt', params: {'post_id': postId});
+        // Fix function call to use correct column name (id instead of post_id)
+        await supabase.rpc('decrement_likes_count_bigintt',
+            params: {'id': postId}); // Change here
 
         print('Like removed successfully.');
         emit(SocialAppUnlikeSuccessState());
@@ -399,8 +402,9 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
           'uId': userId,
         });
         print('postId type: ${postId.runtimeType}');
-        await supabase
-            .rpc('increment_likes_count_bigintt', params: {'post_id': postId});
+        // Fix function call to use correct column name (id instead of post_id)
+        await supabase.rpc('increment_likes_count_bigintt',
+            params: {'id': postId}); // Change here
 
         print('Like added successfully.');
         emit(SocialAppLikeSuccessState());
@@ -491,18 +495,21 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
   void signOut(BuildContext context) async {
     try {
       await supabase.auth.signOut();
-      print('User signed out successfully');
-
-      // Navigate to the login screen or reset the app state
-      Navigator.pushReplacement(
+      await supabase.removeAllChannels();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      PaintingBinding.instance.imageCache.clear();
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => SocialLoginScreen()),
+        MaterialPageRoute(
+            builder: (context) => MyApp(
+                  startWidget: SocialLoginScreen(),
+                )),
+        (Route<dynamic> route) => false,
       );
     } catch (error) {
       print('Error signing out: $error');
-      // Handle the error, e.g., show a message to the user
     }
-    uId = '';
   }
 
   List<UserModel> users = [];
@@ -611,6 +618,10 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
       'text': text,
       'chat_id': chatId,
       'time': at,
+    }).then((value) {
+      emit(SocialAppSendMessagesSuccessState());
+    }).catchError((error) {
+      emit(SocialAppSendMessagesErrorState());
     });
   }
 
@@ -628,19 +639,47 @@ class SocialAppCubit extends Cubit<SocialAppStates> {
         .toList();
   }
 
+  ///////////////////////////////////////////////////
+  //////////////////////////////////////////////////
+  Stream<List<MessagesModel>> getMessagesStream(String chatId) {
+    return supabase
+        .from('message')
+        .select()
+        .eq('chat_id', chatId)
+        .order('time', ascending: true)
+        .asStream() // Use stream() to get a real-time stream
+        .map((response) {
+      // Convert the response to a list of MessagesModel
+      return (response as List<dynamic>)
+          .map((item) => MessagesModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
   Future<void> fetchAndFillMessages({required chatId}) async {
     emit(SocialAppGetMessagesLoadingState());
     try {
       final fetchedMessage = await getMessages(chatId);
       messages = fetchedMessage;
-      for (var message in messages) {
-        print(message);
-        print(messages.length);
-        emit(SocialAppGetMessagesSuccessState());
-      }
+      emit(SocialAppGetMessagesSuccessState()); // Emit once after fetching
     } catch (error) {
       print('Error filling messages list: $error');
       emit(SocialAppGetMessagesErrorState());
+    }
+  }
+
+  //////////////////////////////////////////
+  /////////////////////////////////////////
+  /////////////////////////////////////////
+  Stream<List<MessagesModel>> fetchMessagesStream(String chatId) {
+    emit(SocialAppGetMessagesLoadingState()); // Show loading state
+    try {
+      // Return the stream that listens to the messages
+      return getMessagesStream(chatId);
+    } catch (error) {
+      print('Error fetching messages: $error');
+      emit(SocialAppGetMessagesErrorState());
+      return Stream.error('Error fetching messages');
     }
   }
 
