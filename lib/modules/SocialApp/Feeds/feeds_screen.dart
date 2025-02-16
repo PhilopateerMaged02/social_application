@@ -181,8 +181,10 @@ class _FeedsScreenState extends State<FeedsScreen> {
                           postId: postModel.id.toInt(), userId: postModel.uId);
                       postModel.postLikes = postModel.postLikes == 0
                           ? postModel.postLikes + 1
-                          : postModel.postLikes -
-                              1; // Update the likes count locally
+                          : postModel.postLikes - 1;
+                    });
+                    setState(() {
+                      postModel.postLikes;
                     });
                   },
                   child: Row(
